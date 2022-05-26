@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/">
+        <file>fshader_phong.glsl</file>
+        <file>vshader_phong.glsl</file>
+        <file>vshader.glsl</file>
+        <file>fshader.glsl</file>
+    </qresource>
+</RCC>
