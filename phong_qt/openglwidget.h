@@ -65,11 +65,12 @@ private:
 
     QOpenGLTexture *texture = nullptr;
 
-    QMatrix4x4 projection;
-
+    QMatrix4x4 ProjMat;
+     QMatrix4x4 ViewMat;
+QQuaternion rotation;
     QVector2D mousePressPosition;
     QVector3D rotationAxis;
     qreal angularSpeed = 0;
-    QQuaternion rotation;
+
 };
 #endif // OPENGLWIDGET_H

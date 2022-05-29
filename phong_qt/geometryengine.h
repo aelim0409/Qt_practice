@@ -12,12 +12,18 @@ public:
     virtual ~GeometryEngine();
 
     void drawCubeGeometry(QOpenGLShaderProgram *program);
+    float x(int i, int j);
+
+    float y(int i, int j);
+
+
+   float z(int i, int j);
 
 private:
     void initCubeGeometry();
 
     QOpenGLBuffer arrayBuf;
-    QOpenGLBuffer indexBuf;
+   // QOpenGLBuffer indexBuf;
 };
 
 #endif // GEOMETRYENGINE_H

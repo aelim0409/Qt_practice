@@ -2,6 +2,7 @@
 #include <QMouseEvent>
 #include <cmath>
 
+ float mytime=0;
 openglWidget::~openglWidget()
 {
     // Make sure the context is current when deleting the texture
@@ -44,6 +45,7 @@ void openglWidget::timerEvent(QTimerEvent *)
 {
     // Decrease angular speed (friction)
     angularSpeed *= 0.99;
+    mytime+=1;
 
     // Stop rotation when speed goes below threshold
     if (angularSpeed < 0.01) {
@@ -51,6 +53,7 @@ void openglWidget::timerEvent(QTimerEvent *)
     } else {
         // Update rotation
         rotation = QQuaternion::fromAxisAndAngle(rotationAxis, angularSpeed) * rotation;
+       //  rotationAxis = QVector3D(0,mytime,0);
 
         // Request an update
         update();
@@ -130,10 +133,10 @@ void openglWidget::resizeGL(int w, int h)
     const qreal zNear = 3.0, zFar = 7.0, fov = 45.0;
 
     // Reset projection
-    projection.setToIdentity();
+    ProjMat.setToIdentity();
 
     // Set perspective projection
-    projection.perspective(fov, aspect, zNear, zFar);
+    ProjMat.perspective(fov, aspect, zNear, zFar);
 }
 //! [5]
 
@@ -144,18 +147,24 @@ void openglWidget::paintGL()
 
     texture->bind();
 
+    ViewMat.lookAt(QVector3D(0, 0, 3), QVector3D(0, 0, 0), QVector3D(0, 1, 0));
 //! [6]
     // Calculate model view transformation
-    QMatrix4x4 matrix;
-    matrix.translate(0.0, 0.0, -5.0);
-    matrix.rotate(rotation);
+    QMatrix4x4 ModelMat;
+    ModelMat.rotate(rotation);
+    ModelMat.translate(0.0, 0.0, -5.0);
+
 
     // Set modelview-projection matrix
-    program.setUniformValue("mvp_matrix", projection * matrix);
+    program.setUniformValue("uProjMat", ProjMat);
+     program.setUniformValue("uModelMat", ViewMat * ModelMat);
+     // program.setUniformValue("uSpc", spc);
+       //program.setUniformValue("uShininess", Shininess);
+
 //! [6]
 
     // Use texture unit 0 which contains cube.png
-    program.setUniformValue("texture", 0);
+  //  program.setUniformValue("texture", 0);
 
     // Draw cube geometry
     geometries->drawCubeGeometry(&program);
