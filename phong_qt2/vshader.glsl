@@ -3,21 +3,48 @@
 precision mediump int;
 precision mediump float;
 #endif
-
 uniform mat4 mvp_matrix;
 
-attribute vec4 a_position;
+uniform mat4 uProjMat;
+uniform mat4 uModelMat;
+//uniform vec4 uSpc;
+//uniform float uShiness;
+
+attribute vec4 vPosition;
+attribute vec4 vColor;
+attribute vec4 vNormal;
+
+varying vec4 color;
+varying vec3 N3;
+varying vec3 L3;
+varying vec3 V3;
+
 //attribute vec2 a_texcoord;
 
 //varying vec2 v_texcoord;
 
-//! [0]
+
 void main()
 {
-    // Calculate vertex position in screen space
-    gl_Position = mvp_matrix * a_position;
+    gl_Position = uProjMat * (uModelMat * vPosition);
+    //gl_Position = mvp_matrix * vPosition;
 
-    // Pass texture coordinate to fragment shader
-    // Value will be automatically interpolated to fragments inside polygon faces
-   // v_texcoord = a_texcoord;
+    gl_Position *= vec4(1, 1, -1, 1);
+    float uShininess=100;
+    vec4 uSpc= vec4(0.5,0.5,0.5,0);
+
+    vec4 N = uModelMat * vNormal;
+    N3 = normalize(vec3(N.xyz));
+
+    vec4 P = mvp_matrix* vPosition;
+
+    vec4 Lpos = vec4(3, 3, 0, 1);
+    vec4 L = Lpos - P;
+    L3 = normalize(vec3(L.xyz));
+
+    vec4 V = vec4(0, 0, 0, 1);
+    V3 = normalize(vec3((V - P).xyz));
+
+    color = vColor;
+
 }

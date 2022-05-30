@@ -11,7 +11,7 @@ openglWidget::~openglWidget()
     delete geometries;
     //doneCurrent();
 }
-
+float mytime=0;
 //! [0]
 void openglWidget::mousePressEvent(QMouseEvent *e)
 {
@@ -44,7 +44,7 @@ void openglWidget::timerEvent(QTimerEvent *)
 {
     // Decrease angular speed (friction)
     angularSpeed *= 0.99;
-
+    mytime+=1;
     // Stop rotation when speed goes below threshold
     if (angularSpeed < 0.01) {
         angularSpeed = 0.0;
@@ -65,7 +65,7 @@ void openglWidget::initializeGL()
     glClearColor(0, 0, 0, 1);
 
     initShaders();
-    initTextures();
+    //initTextures();
 
 //! [2]
     // Enable depth buffer
@@ -130,10 +130,10 @@ void openglWidget::resizeGL(int w, int h)
     const qreal zNear = 3.0, zFar = 7.0, fov = 45.0;
 
     // Reset projection
-    projection.setToIdentity();
+    ProjMat.setToIdentity();
 
     // Set perspective projection
-    projection.perspective(fov, aspect, zNear, zFar);
+    ProjMat.perspective(fov, aspect, zNear, zFar);
 }
 //! [5]
 
@@ -142,20 +142,30 @@ void openglWidget::paintGL()
     // Clear color and depth buffer
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-    texture->bind();
 
+
+    //texture->bind();
+
+   // ViewMat.lookAt(QVector3D(0, 0, 3), QVector3D(0, 0, 0), QVector3D(0, 1, 0));
 //! [6]
-    // Calculate model view transformation
-    QMatrix4x4 matrix;
-    matrix.translate(0.0, 0.0, -5.0);
-    matrix.rotate(rotation);
 
-    // Set modelview-projection matrix
-    program.setUniformValue("mvp_matrix", projection * matrix);
+    QMatrix4x4 ModelMat;
+    //ProjMat.setToIdentity();
+
+    ModelMat.translate(0.0, 0.0, -5.0);
+    ModelMat.rotate(rotation);
+
+
+     program.setUniformValue("mvp_matrix", ProjMat*ModelMat);
+
+    program.setUniformValue("uProjMat", ProjMat);
+    program.setUniformValue("uModelMat", ModelMat);
+
+
 //! [6]
 
     // Use texture unit 0 which contains cube.png
-    program.setUniformValue("texture", 0);
+    //  program.setUniformValue("texture", 0);
 
     // Draw cube geometry
     geometries->drawCubeGeometry(&program);

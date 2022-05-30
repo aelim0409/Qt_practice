@@ -6,7 +6,8 @@
 struct VertexData
 {
     QVector4D position;
-    //QVector4D color;
+    QVector4D color;
+    QVector4D normal;
 };
 
 #define PI 3.1415926535898
@@ -64,7 +65,7 @@ void GeometryEngine::initCubeGeometry()
     // duplicate vertex for each face because texture coordinate
     // is different.
    NumVertices = 100000;
-   //QVector4D color= QVector4D(1,0,0,0);
+   QVector4D color= QVector4D(0.5,0.5,0.5,0);
    VertexData  *vertices = new VertexData[NumVertices];
 
         int cur = 0;
@@ -77,18 +78,31 @@ void GeometryEngine::initCubeGeometry()
                     QVector4D c(x(i+1, j+1), y(i+1, j+1), z(i+1, j+1),1);
                     QVector4D d(x(i+1, j), y(i+1, j), z(i+1, j),1);
 
-
+/*
                     if (j != p)
                     {
-                        vertices[cur].position = a;     cur++;
-                        vertices[cur].position = b;       cur++;
-                        vertices[cur].position = c;    cur++;
+                        vertices[cur].position = a;        cur++;
+                        vertices[cur].position = b;    cur++;
+                        vertices[cur].position = c;        cur++;
                     }
                     if (j != 0)
                     {
-                        vertices[cur].position = c;       cur++;
+                        vertices[cur].position = c;     cur++;
                         vertices[cur].position = d;     cur++;
-                        vertices[cur].position = a;      cur++;
+                        vertices[cur].position = a;     cur++;
+                    }
+                    */
+                    if (j != p)
+                    {
+                        vertices[cur].position = a;   vertices[cur].color = color; vertices[cur].normal = a;    cur++;
+                        vertices[cur].position = b;   vertices[cur].color = color; vertices[cur].normal = b;    cur++;
+                        vertices[cur].position = c;   vertices[cur].color = color; vertices[cur].normal = c;    cur++;
+                    }
+                    if (j != 0)
+                    {
+                        vertices[cur].position = c;   vertices[cur].color = color; vertices[cur].normal = c;    cur++;
+                        vertices[cur].position = d;   vertices[cur].color = color; vertices[cur].normal = d;    cur++;
+                        vertices[cur].position = a;   vertices[cur].color = color; vertices[cur].normal = a;    cur++;
                     }
                 }
             }
@@ -110,15 +124,29 @@ void GeometryEngine::drawCubeGeometry(QOpenGLShaderProgram *program)
     arrayBuf.bind();
   //  indexBuf.bind();
 
-    // Offset for position
+
+
+    // Tell OpenGL programmable pipeline how to locate vertex position data
     quintptr offset = 0;
 
     // Tell OpenGL programmable pipeline how to locate vertex position data
-    int vertexLocation = program->attributeLocation("a_position");
-    program->enableAttributeArray(vertexLocation);
-    program->setAttributeBuffer(vertexLocation, GL_FLOAT, offset, 4, sizeof(VertexData));
+    int vPosition = program->attributeLocation("vPosition");
+    printf("vPosition = %d\n",vPosition);
+    program->enableAttributeArray(vPosition);
+    program->setAttributeBuffer(vPosition, GL_FLOAT, offset, 4, sizeof(VertexData));
 
+    // Offset for texture coordinate
+    offset += sizeof(QVector4D);
+    int vColor = program->attributeLocation("vColor");
+     printf("vColor = %d\n",vColor);
+    program->enableAttributeArray(vColor);
+    program->setAttributeBuffer(vColor, GL_FLOAT, offset, 4, sizeof(VertexData));
 
+    offset += sizeof(QVector4D);
+    int vNormal = program->attributeLocation("vNormal");
+    printf("vNormal = %d\n",vNormal);
+    program->enableAttributeArray(vNormal);
+    program->setAttributeBuffer(vNormal, GL_FLOAT, offset, 4, sizeof(VertexData));
 
 
     // Offset for texture coordinate
