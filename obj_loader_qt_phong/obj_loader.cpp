@@ -41,8 +41,9 @@ void obj_loader::loadModel(QString s)
                               {
  //                                 qDebug() << "lineparts first == 'v' ";
 
-                                  v.append(QVector3D(lineParts.at(1).toFloat(), lineParts.at(2).toFloat(),
+                                  v.push_back(QVector3D(lineParts.at(1).toFloat(), lineParts.at(2).toFloat(),
                                            lineParts.at(3).toFloat()));
+
                                   /*
                                   if(v[vertex_num].x()> maxX)   maxX=v[vertex_num].x();
                                   if(v[vertex_num].y()> maxY)   maxY=v[vertex_num].y();
@@ -70,9 +71,20 @@ void obj_loader::loadModel(QString s)
 //                                 qDebug() << "p1 index" << lineParts.at(1).split("//").value(0).toInt() - 1;
                                 // qDebug() << "p2 index" << lineParts.at(1).split("//").at(1);
 
-                                  triangle.p1 = v.at(lineParts.at(1).split("//").value(0).toInt() - 1);
+//                                  triangle.p1 = v.at(lineParts.at(1).split("//").value(0).toInt() - 1);
  //                                 qDebug()<<"v.at(1)="<<lineParts.at(1).split("//").value(0).toInt() - 1;
 
+//                                  triangle.p1 = v.at(lineParts.at(1).toInt() - 1);
+//                                  triangle.p2 = v.at(lineParts.at(2).toInt() - 1);
+//                                  triangle.p3 = v.at(lineParts.at(3).toInt() - 1);
+
+
+                                  triangle.p1 = v[lineParts.at(1).toInt() - 1];
+                                  triangle.p2 = v[lineParts.at(2).toInt() - 1];
+                                  triangle.p3 = v[lineParts.at(3).toInt() - 1];
+
+
+/*
                                   triangle.p2 = v.at(lineParts.at(2).split("//").at(0).toInt() - 1);
 //                                  qDebug()<<"v.at(2)="<<lineParts.at(2).split("//").value(0).toInt() - 1;
 
@@ -80,8 +92,8 @@ void obj_loader::loadModel(QString s)
 //                                  qDebug()<<"v.at(3)="<<lineParts.at(3).split("//").value(0).toInt() - 1;
 //                                  qDebug() << "p1 found";qDebug() << "p2 found";
 
-
-                                  m_triangles.append(triangle);
+*/
+                                  m_triangles.push_back(triangle);
 
                               //  qDebug() << "Triangles count" << m_triangles.count();
                                   /*
@@ -129,4 +141,6 @@ void obj_loader::loadModel(QString s)
                       file.close();
                   }
               }
+    else
+        qDebug()<<"No file!";
          }

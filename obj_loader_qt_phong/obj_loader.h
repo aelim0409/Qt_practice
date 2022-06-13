@@ -17,14 +17,14 @@ public:
     QString fileName;
     int vertex_num=0;
     int face_num=0;
-    /*
+
     float maxX = 0,maxY=0,maxZ=0;
     float minX=-1000000, minY=-100000,minZ=-100000;
     float sumX=0,sumY=0,sumZ=0;
     float avgX,avgY,avgZ=0;
     float scaleX,scaleY,scaleZ=0;
     float scaleAll=0;
-*/
+
        struct QOpenGLTriangle3D
        {
            QVector3D p1 = QVector3D(0, 0, 0);

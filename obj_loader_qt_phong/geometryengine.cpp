@@ -2,6 +2,7 @@
 
 #include <QVector2D>
 #include <QVector3D>
+#include <stdlib.h>
 
 
 struct VertexData
@@ -67,6 +68,21 @@ QVector3D GeometryEngine::getNormal(QVector4D a, QVector4D b, QVector4D c)
      return n;
 
 }
+
+QVector3D GeometryEngine::getNormal_vertex(QVector4D a, QVector4D b, QVector4D c)
+{
+
+    QVector3D a3 = QVector3D(a.x(), a.y(), a.z());
+    QVector3D b3 = QVector3D(b.x(), b.y(), b.z());
+        QVector3D c3 = QVector3D(c.x(), c.y(), c.z());
+        QVector3D p = a3+b3+c3;
+        p=p/3;
+
+
+     return p;
+
+}
+
 float GeometryEngine::x(int i, int j)
 {
     return ((R + r * cos((-1 + 2 * (float)j / q) * PI)) * cos((-1 + 2 * (float)i / p) * PI));
@@ -84,13 +100,27 @@ float GeometryEngine::z(int i, int j)
 
 void GeometryEngine::initObj()
 {
-    objLoader->loadModel("C:/homework3/bunny.obj");
+    QString name;
+    qDebug()<<"objName:";
+
+    scanf_s("obj Name : %s",&name );
+    name="buddha.obj";
+
+    qDebug()<<name;
+    objLoader->loadModel("C:/homework3/"+name);
+
+
+
+
+
 //   qDebug() << "load Complete!";
-    QVector4D color= QVector4D(0,0,1,0);
+    QVector4D color= QVector4D(0.5,0.5,0.5,0);
     NumVertices = objLoader->m_triangles.size()*3;
     VertexData  *vertices = new VertexData[NumVertices];
 //qDebug()<<objLoader->m_triangles.size();
     int cur=0;
+
+    QVector3D * fnormal = new QVector3D[objLoader->m_triangles.size()];
     for(int i=0;i<objLoader->m_triangles.size();i++)
     {
         QVector4D a = QVector4D(objLoader->m_triangles[i].p1,1);
@@ -98,18 +128,62 @@ void GeometryEngine::initObj()
         QVector4D c = QVector4D(objLoader->m_triangles[i].p3,1);
 
     //    qDebug()<<a.x()<<" " <<a.y()<< " " <<a.z();
+/*
+        if(normalFlag==0)
+         {
+            n = QVector4D(getNormal(a,b,c),1);
+            printf("face\n");
+        }
+        else
+         {
+            n = QVector4D(getNormal_vertex(a,b,c),1);
+            printf("vertex!\n");
+        }
+*/
+        fnormal[i] = getNormal(a,b,c);
 
-         QVector4D n = QVector4D(getNormal(a,b,c),1);
-        vertices[cur].position = a;   vertices[cur].color = color; vertices[cur].normal = n;    cur++;
-        vertices[cur].position = b;   vertices[cur].color = color; vertices[cur].normal = n;    cur++;
-        vertices[cur].position = c;   vertices[cur].color = color; vertices[cur].normal = n;    cur++;
     }
+
+
+    QVector3D * vnormal = new QVector3D[objLoader->vertex_num];
+    for(int i=0; i<objLoader->vertex_num; i++)
+        vnormal[i] =QVector3D(0,0,0);
+
+    for(int i=0;i<objLoader->m_triangles.size();i++)
+    {
+        for(int j=0; j<3; j++);
+
+
+
+
+
+    }
+    for(int i=0; i<objLoader->vertex_num; i++)
+        vnormal[i].normalize();
+
+
+
+    cur=0;
+    for(int i=0;i<objLoader->m_triangles.size();i++)
+    {
+        QVector4D a = QVector4D(objLoader->m_triangles[i].p1,1);
+        QVector4D b = QVector4D(objLoader->m_triangles[i].p2,1);
+        QVector4D c = QVector4D(objLoader->m_triangles[i].p3,1);
+
+        vertices[cur].position = a;   vertices[cur].color = color; vertices[cur].normal = QVector4D(fnormal[i],1);    cur++;
+        vertices[cur].position = b;   vertices[cur].color = color; vertices[cur].normal = QVector4D(fnormal[i],1);    cur++;
+        vertices[cur].position = c;   vertices[cur].color = color; vertices[cur].normal = QVector4D(fnormal[i],1);    cur++;
+    }
+
+
+
 
 
 
     arrayObjBuf.bind();
     arrayObjBuf.allocate(vertices, NumVertices * sizeof(VertexData));
-
+    delete [] fnormal;
+    delete [] vnormal;
 }
 
 void GeometryEngine::drawObjGeometry(QOpenGLShaderProgram *program)

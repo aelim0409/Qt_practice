@@ -18,7 +18,8 @@ int main(int argc, char *argv[])
     app.setApplicationVersion("0.1");
 #ifndef QT_NO_OPENGL
     openglWidget widget;
-    printf("gggggg\n");
+    qDebug()<<"start widget";
+    printf("ggggggggggggggggggggggggg\n");
     widget.show();
 #else
     QLabel note("OpenGL Support required");

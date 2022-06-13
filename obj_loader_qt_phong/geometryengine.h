@@ -16,12 +16,14 @@ public:
     void drawCubeGeometry(QOpenGLShaderProgram *program);
      void drawObjGeometry(QOpenGLShaderProgram *program);
     QVector3D getNormal(QVector4D a, QVector4D b, QVector4D c);
+    QVector3D getNormal_vertex(QVector4D a, QVector4D b, QVector4D c);
     float x(int i, int j);
 
     float y(int i, int j);
 
 
    float z(int i, int j);
+   int normalFlag=0;
 private:
     void initCubeGeometry();
     void initObj();

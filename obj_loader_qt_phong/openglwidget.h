@@ -13,6 +13,7 @@
 #include <QBasicTimer>
 #include <QOpenGLShaderProgram>
 #include <QOpenGLTexture>
+#include <QKeyEvent>
 
 class GeometryEngine;
 
@@ -37,14 +38,16 @@ class openglWidget : public QOpenGLWidget, protected QOpenGLFunctions
     Q_OBJECT
 
 public:
+    openglWidget(QWidget *parent = nullptr);
     using QOpenGLWidget::QOpenGLWidget;
     ~openglWidget();
 
-
+    int normalFlag=0;
 
 protected:
     void mousePressEvent(QMouseEvent *e) override;
     void mouseReleaseEvent(QMouseEvent *e) override;
+    void KeyPressEvent(QKeyEvent *e);
     void timerEvent(QTimerEvent *e) override;
 
     void initializeGL() override;
@@ -53,6 +56,11 @@ protected:
 
     void initShaders();
     void initTextures();
+
+private slots:
+    //void on_pushButton_clicked();
+
+   // void on_pushButton_2_clicked();
 
 private:
     QBasicTimer timer;
@@ -68,5 +76,11 @@ private:
     QVector3D rotationAxis;
     qreal angularSpeed = 0;
     QQuaternion rotation;
+
+  //  Ui::openglWidget *ui;
+
+
+
+
 };
 #endif // OPENGLWIDGET_H

@@ -1,7 +1,13 @@
 #include "openglwidget.h"
 #include <QMouseEvent>
 #include <cmath>
+#include <QDebug>
+#include "ui_openglwidget.h"
 
+openglWidget::openglWidget(QWidget *par)
+{
+   // ui->setupUi(this);
+}
 openglWidget::~openglWidget()
 {
     // Make sure the context is current when deleting the texture
@@ -17,6 +23,7 @@ void openglWidget::mousePressEvent(QMouseEvent *e)
 {
     // Save mouse press position
     mousePressPosition = QVector2D(e->position());
+    qDebug()<< "space!";
 }
 
 void openglWidget::mouseReleaseEvent(QMouseEvent *e)
@@ -36,6 +43,16 @@ void openglWidget::mouseReleaseEvent(QMouseEvent *e)
 
     // Increase angular speed
     angularSpeed += acc;
+}
+
+void openglWidget::KeyPressEvent(QKeyEvent *e)
+{
+        if(e->key()==Qt::Key_Space)
+        {
+            geometries->normalFlag=1;
+            qDebug()<< "space!";
+        }
+
 }
 //! [0]
 
@@ -151,7 +168,7 @@ void openglWidget::paintGL()
 
     ModelMat.translate(0.0, 0.0,-5 );
     ModelMat.rotate(rotation);
-     ModelMat.scale(10,10,10);
+     ModelMat.scale(2,2,2);
 
     program.setUniformValue("mvp_matrix", ProjMat*ModelMat);
 
@@ -167,3 +184,17 @@ void openglWidget::paintGL()
     // Draw cube geometry
     geometries->drawObjGeometry(&program);
 }
+
+/*
+void openglWidget::on_pushButton_clicked()
+{
+    geometries->normalFlag=1;
+}
+
+
+void openglWidget::on_pushButton_2_clicked()
+{
+    geometries->normalFlag=0;
+}
+*/
+
