@@ -37,9 +37,11 @@ void main()
     N3 = normalize(vec3(N.xyz));
 
     vec4 P = mvp_matrix* vPosition;
+
     vec4 Lpos = vec4(3, 3, 0, 1);
     vec4 L = Lpos - P;
     L3 = normalize(vec3(L.xyz));
+
     vec4 V = vec4(0, 0, 0, 1);
     V3 = normalize(vec3((V - P).xyz));
 

@@ -44,6 +44,32 @@ void obj_loader::loadModel(QString s)
                                   v.push_back(QVector3D(lineParts.at(1).toFloat(), lineParts.at(2).toFloat(),
                                            lineParts.at(3).toFloat()));
 
+
+                                  if(v[vertex_num].x()> maxX)   maxX=v[vertex_num].x();
+                                  if(v[vertex_num].y()> maxY)   maxY=v[vertex_num].y();
+                                  if(v[vertex_num].z()> maxZ)   maxZ=v[vertex_num].z();
+
+                                  if(v[vertex_num].x() < minX)	minX=v[vertex_num].x();
+                                  if(v[vertex_num].y() < minY)	minY=v[vertex_num].y();
+                                  if(v[vertex_num].z() < minZ)	minZ=v[vertex_num].z();
+
+                                  sumX += v[vertex_num].x();
+                                  sumY +=v[vertex_num].y();
+                                  sumZ += v[vertex_num].z();
+
+
+
+                                  vertex_num++;
+                              }
+
+
+                              if(lineParts.first() == "vn")
+                              {
+ //                                 qDebug() << "lineparts first == 'v' ";
+
+                                  vn.push_back(QVector3D(lineParts.at(1).toFloat(), lineParts.at(2).toFloat(),
+                                           lineParts.at(3).toFloat()));
+
                                   /*
                                   if(v[vertex_num].x()> maxX)   maxX=v[vertex_num].x();
                                   if(v[vertex_num].y()> maxY)   maxY=v[vertex_num].y();
@@ -59,7 +85,7 @@ void obj_loader::loadModel(QString s)
 */
 
 
-                                  vertex_num++;
+                                  //vertex_num++;
                               }
 
 
@@ -79,9 +105,20 @@ void obj_loader::loadModel(QString s)
 //                                  triangle.p3 = v.at(lineParts.at(3).toInt() - 1);
 
 
-                                  triangle.p1 = v[lineParts.at(1).toInt() - 1];
-                                  triangle.p2 = v[lineParts.at(2).toInt() - 1];
-                                  triangle.p3 = v[lineParts.at(3).toInt() - 1];
+                                 // triangle.v1=lineParts.at(1).toInt() - 1;
+                                 // triangle.v2=lineParts.at(2).toInt() - 1;
+                                 // triangle.v3=lineParts.at(3).toInt() - 1;
+
+                                  //face vertex 3
+                                  triangle.v1=lineParts.at(1).split("/").at(0).toInt()-1;
+                                  triangle.v2=lineParts.at(2).split("/").at(0).toInt()-1;
+                                  triangle.v3=lineParts.at(3).split("/").at(0).toInt()-1;
+
+                                // qDebug()<<triangle.v1<<" "<<triangle.v2<<" "<<triangle.v3;
+
+                                  triangle.p1 = v[triangle.v1];
+                                  triangle.p2 = v[triangle.v2];
+                                  triangle.p3 = v[triangle.v3];
 
 
 /*
@@ -113,7 +150,7 @@ void obj_loader::loadModel(QString s)
                       }
 
                       qDebug() << "loop END!";
-/*
+
                       avgX = sumX / vertex_num;
                        avgY = sumY / vertex_num;
                        avgZ = sumZ / vertex_num;
@@ -136,8 +173,8 @@ void obj_loader::loadModel(QString s)
                            scaleAll= scaleZ;
                        }
 
-                        qDebug() << scaleX;
-                        */
+                       qDebug() << scaleAll;
+
                       file.close();
                   }
               }

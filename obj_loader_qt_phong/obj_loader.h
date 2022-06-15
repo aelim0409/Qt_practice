@@ -27,6 +27,7 @@ public:
 
        struct QOpenGLTriangle3D
        {
+           int v1,v2,v3=0;
            QVector3D p1 = QVector3D(0, 0, 0);
            QVector3D p2 = QVector3D(0, 0, 0);
            QVector3D p3 = QVector3D(0, 0, 0);

@@ -14,7 +14,7 @@ int main(int argc, char *argv[])
     format.setDepthBufferSize(24);
     QSurfaceFormat::setDefaultFormat(format);
 
-    app.setApplicationName("torus");
+    app.setApplicationName("obj_loader");
     app.setApplicationVersion("0.1");
 #ifndef QT_NO_OPENGL
     openglWidget widget;

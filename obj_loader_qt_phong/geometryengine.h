@@ -24,6 +24,7 @@ public:
 
    float z(int i, int j);
    int normalFlag=0;
+   int scaleAll=0;
 private:
     void initCubeGeometry();
     void initObj();

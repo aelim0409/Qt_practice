@@ -161,19 +161,23 @@ void openglWidget::paintGL()
     glEnable(GL_DEPTH_TEST);
     //texture->bind();
 
-   // ViewMat.lookAt(QVector3D(0, 0, 3), QVector3D(0, 0, 0), QVector3D(0, 1, 0));
+    ViewMat.lookAt(QVector3D(0, 0, 3), QVector3D(0, 0, 0), QVector3D(0, 1, 0));
+    ProjMat.perspective(45, width()/ height(), 3, 7);
+    //qDebug()<<width() << " "<<height();
+
 //! [6]
 
     QMatrix4x4 ModelMat;
 
-    ModelMat.translate(0.0, 0.0,-5 );
+    ModelMat.translate(0,0,-5);
     ModelMat.rotate(rotation);
-     ModelMat.scale(2,2,2);
+    ModelMat.scale(geometries->scaleAll,geometries->scaleAll,geometries->scaleAll);
+    //ModelMat.scale(0.5,0.5,0.5);
 
-    program.setUniformValue("mvp_matrix", ProjMat*ModelMat);
+    program.setUniformValue("mvp_matrix", ProjMat*ViewMat*ModelMat);
 
     program.setUniformValue("uProjMat", ProjMat);
-    program.setUniformValue("uModelMat", ModelMat);
+    program.setUniformValue("uModelMat",ViewMat* ModelMat);
 
 
 //! [6]
