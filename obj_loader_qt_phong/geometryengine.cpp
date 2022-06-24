@@ -16,7 +16,6 @@ struct VertexData
 #define R 0.8
 #define r 0.5
 
-
 #define Cos(th) cos(PI/180*(th))
 #define Sin(th) sin(PI/180*(th))
 
@@ -41,7 +40,62 @@ GeometryEngine::GeometryEngine()
     objLoader= new obj_loader();
 
     // Initializes cube geometry and transfers it to VBOs
-    initObj();
+    QString name;
+
+    for(int i=1;i<=26;i++)
+    {
+         qDebug()<<"ddddd" <<i;
+        objLoaders_toss[i-1]=new obj_loader();
+        if(i<10)
+            name="0"+QString::number(i)+".obj";
+        else
+          name=QString::number(i)+".obj";
+        objLoaders_toss[i-1]->loadModel("C:/homework3/toss/"+name);
+        objLoaders_toss[i-1]->fileName=name;
+
+
+        objLoader=objLoaders_toss[i-1];
+        initObj();
+      //  Sleep(500);
+
+
+    }
+
+}
+
+GeometryEngine::GeometryEngine(obj_loader &obj)
+    : indexBuf(QOpenGLBuffer::IndexBuffer)
+{
+    initializeOpenGLFunctions();
+
+    // Generate 2 VBOs
+    arrayBuf.create();
+    indexBuf.create();
+
+    arrayObjBuf.create();
+    indexObjBuf.create();
+    objLoader= new obj_loader();
+
+    // Initializes cube geometry and transfers it to VBOs
+    QString name;
+
+    for(int i=1;i<=26;i++)
+    {
+         qDebug()<<"ddddd" <<i;
+        objLoaders_toss[i-1]=new obj_loader();
+        if(i<10)
+            name="0"+QString::number(i)+".obj";
+        else
+          name=QString::number(i)+".obj";
+        objLoaders_toss[i-1]->loadModel("C:/homework3/toss/"+name);
+        objLoaders_toss[i-1]->fileName=name;
+/*
+      objLoader=objLoaders_toss[i-1];
+        initObj();
+        Sleep(1000);
+*/
+    }
+
 }
 
 GeometryEngine::~GeometryEngine()
@@ -101,25 +155,28 @@ float GeometryEngine::z(int i, int j)
 void GeometryEngine::initObj()
 {
     QString name;
-    qDebug()<<"objName:";
+    qDebug()<<"objName:"<<objLoader->fileName;
 
-    scanf_s("obj Name : %s",&name );
-   name="buddha.obj";
-   //name="01.obj";
+   // scanf_s("obj Name : %s",&name );
+   //name="buddha.obj";
+  //name="25.obj";
 
-    qDebug()<<name;
-    objLoader->loadModel("C:/homework3/"+name);
+    qDebug()<<objLoader->vertex_num<<" "<<objLoader->m_triangles.size();
+
+
+
+    //objLoader->loadModel("C:/homework3/"+name);
    // objLoader->loadModel("C:/homework3/toss/"+name);
 
+
     scaleAll = objLoader->scaleAll;
+    transtlateAvg=QVector3D(-objLoader->avgX,-objLoader->avgY,-(objLoader->avgZ)-5);
 
-
-
-//   qDebug() << "load Complete!";
     QVector4D color= QVector4D(0.5,0.5,0.5,0);
     NumVertices = objLoader->m_triangles.size()*3;
     VertexData  *vertices = new VertexData[NumVertices];
-//qDebug()<<objLoader->m_triangles.size();
+
+
     int cur=0;
 
     QVector3D * fnormal = new QVector3D[objLoader->m_triangles.size()];
@@ -129,21 +186,7 @@ void GeometryEngine::initObj()
         QVector4D b = QVector4D(objLoader->m_triangles[i].p2,1);
         QVector4D c = QVector4D(objLoader->m_triangles[i].p3,1);
 
-    //    qDebug()<<a.x()<<" " <<a.y()<< " " <<a.z();
-/*
-        if(normalFlag==0)
-         {
-            n = QVector4D(getNormal(a,b,c),1);
-            printf("face\n");
-        }
-        else
-         {
-            n = QVector4D(getNormal_vertex(a,b,c),1);
-            printf("vertex!\n");
-        }
-*/
         fnormal[i] = getNormal(a,b,c);
-
     }
 
 
@@ -152,7 +195,6 @@ void GeometryEngine::initObj()
         vnormal[i] =QVector3D(0,0,0);
 
 
-    qDebug()<<objLoader->vertex_num<<" "<<objLoader->m_triangles.size();
 
 
     for(int i=0;i<objLoader->m_triangles.size();i++)
@@ -202,8 +244,13 @@ void GeometryEngine::initObj()
     delete [] vnormal;
 }
 
+
 void GeometryEngine::drawObjGeometry(QOpenGLShaderProgram *program)
 {
+//    for(int i=0;i<26;i++)
+  //  {
+      //  objLoader=objLoaders_toss[i];
+      //  initObj();
     // Tell OpenGL which VBOs to use
     arrayObjBuf.bind();
   //  indexBuf.bind();
@@ -233,19 +280,17 @@ void GeometryEngine::drawObjGeometry(QOpenGLShaderProgram *program)
     program->setAttributeBuffer(vNormal, GL_FLOAT, offset, 4, sizeof(VertexData));
 
 
-    // Offset for texture coordinate
-    //offset += sizeof(QVector3D);
-
-    // Tell OpenGL programmable pipeline how to locate vertex texture coordinate data
-   // int texcoordLocation = program->attributeLocation("a_texcoord");
-   // program->enableAttributeArray(texcoordLocation);
-   // program->setAttributeBuffer(texcoordLocation, GL_FLOAT, offset, 2, sizeof(VertexData));
-
-    // Draw cube geometry using indices from VBO 1
-   // glDrawElements(GL_TRIANGLES, NumVertices, GL_UNSIGNED_SHORT, nullptr);
      glDrawArrays(GL_TRIANGLES, 0, NumVertices);
+    // arrayObjBuf.destroy();
+   //   Sleep(500);
+   // }
 }
 
+void GeometryEngine::drawObjArray(QOpenGLShaderProgram *program)
+{
+    initObj();
+    drawObjGeometry(program);
+}
 void GeometryEngine::initCubeGeometry()
 {
     // For cube we would need only 8 vertices but we have to

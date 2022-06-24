@@ -4,6 +4,7 @@
 #include <QWidget>
 
 #include "geometryengine.h"
+#include "obj_loader.h"
 
 #include <QOpenGLWidget>
 #include <QOpenGLFunctions>
@@ -76,6 +77,8 @@ private:
     QVector3D rotationAxis;
     qreal angularSpeed = 0;
     QQuaternion rotation;
+    obj_loader *objLoader2;
+    obj_loader *objLoaders_toss2[26];
 
   //  Ui::openglWidget *ui;
 

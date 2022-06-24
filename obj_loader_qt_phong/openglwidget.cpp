@@ -4,6 +4,7 @@
 #include <QDebug>
 #include "ui_openglwidget.h"
 
+
 openglWidget::openglWidget(QWidget *par)
 {
    // ui->setupUi(this);
@@ -91,8 +92,26 @@ void openglWidget::initializeGL()
     // Enable back face culling
     glEnable(GL_CULL_FACE);
 //! [2]
+/*
+    QString name;
 
-    geometries = new GeometryEngine;
+    for(int i=1;i<=26;i++)
+    {
+         qDebug()<<"ddddd" <<i;
+        objLoaders_toss2[i-1]=new obj_loader();
+        if(i<10)
+            name="0"+QString::number(i)+".obj";
+        else
+          name=QString::number(i)+".obj";
+        objLoaders_toss2[i-1]->loadModel("C:/homework3/toss/"+name);
+        objLoaders_toss2[i-1]->fileName=name;
+
+        objLoader2=objLoaders_toss2[i-1];
+        geometries = new GeometryEngine(objLoader2);
+        Sleep(1000);
+    }
+*/
+    geometries = new GeometryEngine();
 
     // Use QBasicTimer because its faster than QTimer
     timer.start(12, this);
@@ -144,7 +163,7 @@ void openglWidget::resizeGL(int w, int h)
     qreal aspect = qreal(w) / qreal(h ? h : 1);
 
     // Set near plane to 3.0, far plane to 7.0, field of view 45 degrees
-    const qreal zNear = 3.0, zFar = 7.0, fov = 45.0;
+    const qreal zNear = 0.1, zFar = 100.0, fov = 60.0;
 
     // Reset projection
     ProjMat.setToIdentity();
@@ -162,22 +181,26 @@ void openglWidget::paintGL()
     //texture->bind();
 
     ViewMat.lookAt(QVector3D(0, 0, 3), QVector3D(0, 0, 0), QVector3D(0, 1, 0));
-    ProjMat.perspective(45, width()/ height(), 3, 7);
+    //ProjMat.perspective(45, width()/ height(), 3, 7);
     //qDebug()<<width() << " "<<height();
 
 //! [6]
 
     QMatrix4x4 ModelMat;
 
-    ModelMat.translate(0,0,-5);
-    ModelMat.rotate(rotation);
-    ModelMat.scale(geometries->scaleAll,geometries->scaleAll,geometries->scaleAll);
-    //ModelMat.scale(0.5,0.5,0.5);
+    //ModelMat.translate(0,0,-5);
 
-    program.setUniformValue("mvp_matrix", ProjMat*ViewMat*ModelMat);
+   //ModelMat.translate(geometries->transtlateAvg);
+   ModelMat.translate(0,0,-5);
+    //ModelMat.translate(0,0,-5);
+    ModelMat.rotate(rotation);
+    //ModelMat.scale(geometries->scaleAll,geometries->scaleAll,geometries->scaleAll);
+    ModelMat.scale( 0.1,0.1,0.1);
+
+    program.setUniformValue("mvp_matrix", ProjMat*ModelMat);
 
     program.setUniformValue("uProjMat", ProjMat);
-    program.setUniformValue("uModelMat",ViewMat* ModelMat);
+    program.setUniformValue("uModelMat", ModelMat);
 
 
 //! [6]
@@ -186,7 +209,16 @@ void openglWidget::paintGL()
     //  program.setUniformValue("texture", 0);
 
     // Draw cube geometry
-    geometries->drawObjGeometry(&program);
+/*
+    for(int i=0;i<26;i++)
+    {
+        geometries->objLoader = geometries->objLoaders_toss[i];
+        qDebug()<<geometries->objLoader->fileName;
+        geometries->drawObjArray(&program);
+        Sleep(1000);
+    }
+*/
+   geometries->drawObjGeometry(&program);
 }
 
 /*

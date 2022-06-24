@@ -54,10 +54,11 @@ void obj_loader::loadModel(QString s)
                                   if(v[vertex_num].z() < minZ)	minZ=v[vertex_num].z();
 
                                   sumX += v[vertex_num].x();
-                                  sumY +=v[vertex_num].y();
+                                  sumY += v[vertex_num].y();
                                   sumZ += v[vertex_num].z();
 
 
+                                //    qDebug()<<sumX << v[vertex_num].x();
 
                                   vertex_num++;
                               }
@@ -151,14 +152,14 @@ void obj_loader::loadModel(QString s)
 
                       qDebug() << "loop END!";
 
-                      avgX = sumX / vertex_num;
+                       avgX = sumX / vertex_num;
                        avgY = sumY / vertex_num;
                        avgZ = sumZ / vertex_num;
 
-                       scaleX = (1.0-maxX)*10 + 1;
+                      scaleX = (1.0-maxX)*10 + 1;
                        scaleY = (1.0-maxY)*10 + 1;
                        scaleZ = (1.0-maxZ)*10 + 1;
-
+                       // scaleX=maxX,scaleY=maxY,scaleZ=maxZ;
                        if(scaleX > scaleY)	{
                          if(scaleY > scaleZ)
                            scaleAll= scaleZ;
@@ -173,7 +174,20 @@ void obj_loader::loadModel(QString s)
                            scaleAll= scaleZ;
                        }
 
-                       qDebug() << scaleAll;
+                       if(scaleAll<0)
+                           scaleAll=1;
+/*
+                       scaleX=(maxX+minX)/2;
+                       scaleY=(maxY+minY)/2;
+                       scaleZ=(maxZ+minZ)/2;
+*/
+                       qDebug() <<"maxXYZ"<< maxX << maxY <<maxZ;
+
+                       qDebug() <<"scaleAll"<< scaleAll;
+                       qDebug() <<"scaleXYZ"<< scaleX << scaleY <<scaleZ;
+
+                       qDebug() <<"avgXYZ"<< avgX << avgY <<avgZ;
+                        qDebug() <<"vertexNum&triangleSize"<< vertex_num << m_triangles.size();
 
                       file.close();
                   }
