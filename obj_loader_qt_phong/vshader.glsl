@@ -36,7 +36,7 @@ void main()
     vec4 N = uModelMat * vec4(vNormal.xyz, 0);
     N3 = normalize(vec3(N.xyz));
 
-    vec4 P = mvp_matrix* vPosition;
+    vec4 P = uModelMat* vPosition;
 
     vec4 Lpos = vec4(3, 3, 0, 1);
     vec4 L = Lpos - P;

@@ -215,10 +215,19 @@ void openglWidget::paintGL()
         geometries->objLoader = geometries->objLoaders_toss[i];
         qDebug()<<geometries->objLoader->fileName;
         geometries->drawObjArray(&program);
-        Sleep(1000);
+        Sleep(500);
     }
 */
-   geometries->drawObjGeometry(&program);
+    /*
+
+    for(int i=0;i<26;i++)
+    {
+        geometries->toss_index=i;
+        geometries->drawObjGeometry(&program);
+
+    }
+    */
+     geometries->drawObjGeometry(&program);
 }
 
 /*

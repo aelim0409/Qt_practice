@@ -5,12 +5,6 @@
 #include <stdlib.h>
 
 
-struct VertexData
-{
-    QVector4D position;
-    QVector4D color;
-    QVector4D normal;
-};
 
 #define PI 3.1415926535898
 #define R 0.8
@@ -24,7 +18,7 @@ struct VertexData
 static int p = 100;
 static int q = 100;
  int  NumVertices=0;
-
+int flag=-1;
 //! [0]
 GeometryEngine::GeometryEngine()
     : indexBuf(QOpenGLBuffer::IndexBuffer)
@@ -35,13 +29,17 @@ GeometryEngine::GeometryEngine()
     arrayBuf.create();
     indexBuf.create();
 
-    arrayObjBuf.create();
+    for(int i=0;i<26;i++)
+    {
+        arrayObjBuf[i].create();
+    }
     indexObjBuf.create();
     objLoader= new obj_loader();
 
     // Initializes cube geometry and transfers it to VBOs
     QString name;
 
+    //toss obj 배열생성
     for(int i=1;i<=26;i++)
     {
          qDebug()<<"ddddd" <<i;
@@ -55,6 +53,7 @@ GeometryEngine::GeometryEngine()
 
 
         objLoader=objLoaders_toss[i-1];
+        toss_index=i;
         initObj();
       //  Sleep(500);
 
@@ -72,7 +71,10 @@ GeometryEngine::GeometryEngine(obj_loader &obj)
     arrayBuf.create();
     indexBuf.create();
 
-    arrayObjBuf.create();
+    for(int i=0;i<26;i++)
+    {
+        arrayObjBuf[i].create();
+    }
     indexObjBuf.create();
     objLoader= new obj_loader();
 
@@ -102,7 +104,10 @@ GeometryEngine::~GeometryEngine()
 {
     arrayBuf.destroy();
     indexBuf.destroy();
-    arrayObjBuf.destroy();
+    for(int i=0;i<26;i++)
+    {
+        arrayObjBuf[i].destroy();
+    }
     indexObjBuf.destroy();
 }
 //! [0]
@@ -157,16 +162,8 @@ void GeometryEngine::initObj()
     QString name;
     qDebug()<<"objName:"<<objLoader->fileName;
 
-   // scanf_s("obj Name : %s",&name );
-   //name="buddha.obj";
-  //name="25.obj";
-
     qDebug()<<objLoader->vertex_num<<" "<<objLoader->m_triangles.size();
 
-
-
-    //objLoader->loadModel("C:/homework3/"+name);
-   // objLoader->loadModel("C:/homework3/toss/"+name);
 
 
     scaleAll = objLoader->scaleAll;
@@ -174,8 +171,7 @@ void GeometryEngine::initObj()
 
     QVector4D color= QVector4D(0.5,0.5,0.5,0);
     NumVertices = objLoader->m_triangles.size()*3;
-    VertexData  *vertices = new VertexData[NumVertices];
-
+    objLoader->vertices = new obj_loader::VertexData[NumVertices];
 
     int cur=0;
 
@@ -193,9 +189,6 @@ void GeometryEngine::initObj()
     QVector3D * vnormal = new QVector3D[objLoader->vertex_num];
     for(int i=0; i<objLoader->vertex_num; i++)
         vnormal[i] =QVector3D(0,0,0);
-
-
-
 
     for(int i=0;i<objLoader->m_triangles.size();i++)
     {
@@ -231,14 +224,14 @@ void GeometryEngine::initObj()
         QVector4D b = QVector4D(objLoader->m_triangles[i].p2,1);
         QVector4D c = QVector4D(objLoader->m_triangles[i].p3,1);
 
-        vertices[cur].position = a;   vertices[cur].color = color; vertices[cur].normal = QVector4D(vnormal[objLoader->m_triangles[i].v1],1);    cur++;
-        vertices[cur].position = b;   vertices[cur].color = color; vertices[cur].normal = QVector4D(vnormal[objLoader->m_triangles[i].v2],1);    cur++;
-        vertices[cur].position = c;   vertices[cur].color = color; vertices[cur].normal = QVector4D(vnormal[objLoader->m_triangles[i].v3],1);    cur++;
+        objLoader->vertices[cur].position = a;   objLoader->vertices[cur].color = color; objLoader->vertices[cur].normal = QVector4D(vnormal[objLoader->m_triangles[i].v1],1);    cur++;
+        objLoader->vertices[cur].position = b;   objLoader->vertices[cur].color = color; objLoader->vertices[cur].normal = QVector4D(vnormal[objLoader->m_triangles[i].v2],1);    cur++;
+        objLoader->vertices[cur].position = c;   objLoader->vertices[cur].color = color; objLoader->vertices[cur].normal = QVector4D(vnormal[objLoader->m_triangles[i].v3],1);    cur++;
     }
 
 
-    arrayObjBuf.bind();
-    arrayObjBuf.allocate(vertices, NumVertices * sizeof(VertexData));
+    arrayObjBuf[toss_index-1].bind();
+    arrayObjBuf[toss_index-1].allocate(objLoader->vertices, NumVertices * sizeof(obj_loader::VertexData));
 
     delete [] fnormal;
     delete [] vnormal;
@@ -247,14 +240,17 @@ void GeometryEngine::initObj()
 
 void GeometryEngine::drawObjGeometry(QOpenGLShaderProgram *program)
 {
-//    for(int i=0;i<26;i++)
-  //  {
-      //  objLoader=objLoaders_toss[i];
-      //  initObj();
+  // for(int i=0;i<26;i++)
+   // {
+     //   objLoader=objLoaders_toss[i];
+     //   qDebug()<<"drawObj"<<objLoader->fileName;
     // Tell OpenGL which VBOs to use
-    arrayObjBuf.bind();
-  //  indexBuf.bind();
+  // for(toss_index=0;toss_index<26;toss_index++)
+  // {
+    arrayObjBuf[toss_index-1].bind();
 
+  //  indexBuf.bind();
+    qDebug()<<toss_index;
 
 
     // Tell OpenGL programmable pipeline how to locate vertex position data
@@ -262,27 +258,31 @@ void GeometryEngine::drawObjGeometry(QOpenGLShaderProgram *program)
 
     // Tell OpenGL programmable pipeline how to locate vertex position data
     int vPosition = program->attributeLocation("vPosition");
-    printf("vPosition = %d\n",vPosition);
     program->enableAttributeArray(vPosition);
-    program->setAttributeBuffer(vPosition, GL_FLOAT, offset, 4, sizeof(VertexData));
+    program->setAttributeBuffer(vPosition, GL_FLOAT, offset, 4, sizeof(obj_loader::VertexData));
 
     // Offset for texture coordinate
     offset += sizeof(QVector4D);
+
     int vColor = program->attributeLocation("vColor");
-     printf("vColor = %d\n",vColor);
     program->enableAttributeArray(vColor);
-    program->setAttributeBuffer(vColor, GL_FLOAT, offset, 4, sizeof(VertexData));
+    program->setAttributeBuffer(vColor, GL_FLOAT, offset, 4, sizeof(obj_loader::VertexData));
 
     offset += sizeof(QVector4D);
+
     int vNormal = program->attributeLocation("vNormal");
-    printf("vNormal = %d\n",vNormal);
     program->enableAttributeArray(vNormal);
-    program->setAttributeBuffer(vNormal, GL_FLOAT, offset, 4, sizeof(VertexData));
+    program->setAttributeBuffer(vNormal, GL_FLOAT, offset, 4, sizeof(obj_loader::VertexData));
 
 
-     glDrawArrays(GL_TRIANGLES, 0, NumVertices);
-    // arrayObjBuf.destroy();
-   //   Sleep(500);
+    glDrawArrays(GL_TRIANGLES, 0, NumVertices);
+     //arrayObjBuf.destroy();
+    toss_index+=flag;
+    if(toss_index>=26)
+        flag=-1;
+    else if(toss_index<=0)
+        flag=1;
+    Sleep(100);
    // }
 }
 
@@ -291,6 +291,7 @@ void GeometryEngine::drawObjArray(QOpenGLShaderProgram *program)
     initObj();
     drawObjGeometry(program);
 }
+/*
 void GeometryEngine::initCubeGeometry()
 {
     // For cube we would need only 8 vertices but we have to
@@ -310,20 +311,6 @@ void GeometryEngine::initCubeGeometry()
                     QVector4D c(x(i+1, j+1), y(i+1, j+1), z(i+1, j+1),1);
                     QVector4D d(x(i+1, j), y(i+1, j), z(i+1, j),1);
 
-/*
-                    if (j != p)
-                    {
-                        vertices[cur].position = a;        cur++;
-                        vertices[cur].position = b;    cur++;
-                        vertices[cur].position = c;        cur++;
-                    }
-                    if (j != 0)
-                    {
-                        vertices[cur].position = c;     cur++;
-                        vertices[cur].position = d;     cur++;
-                        vertices[cur].position = a;     cur++;
-                    }
-                    */
                     if (j != p)
                     {
                         QVector4D n = QVector4D(getNormal(a,b,c),1);
@@ -352,6 +339,7 @@ void GeometryEngine::initCubeGeometry()
 
 //! [1]
 }
+
 //! [2]
 void GeometryEngine::drawCubeGeometry(QOpenGLShaderProgram *program)
 {
@@ -395,5 +383,6 @@ void GeometryEngine::drawCubeGeometry(QOpenGLShaderProgram *program)
     // Draw cube geometry using indices from VBO 1
    // glDrawElements(GL_TRIANGLES, NumVertices, GL_UNSIGNED_SHORT, nullptr);
      glDrawArrays(GL_TRIANGLES, 0, NumVertices);
-}
+}*/
 //! [2]
+

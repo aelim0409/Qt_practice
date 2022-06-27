@@ -12,6 +12,14 @@
 class obj_loader
 {
 public:
+
+    struct VertexData
+    {
+        QVector4D position;
+        QVector4D color;
+        QVector4D normal;
+    };
+    VertexData  *vertices;
     obj_loader();
 
     QString fileName;
