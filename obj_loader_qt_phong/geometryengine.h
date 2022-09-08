@@ -5,7 +5,9 @@
 #include <QOpenGLShaderProgram>
 #include <QOpenGLBuffer>
 #include <QVector4D>
+#include <eigen/Eigen/Dense>
 #include "obj_loader.h"
+#include "pca.h"
 
 class GeometryEngine : protected QOpenGLFunctions
 {
@@ -36,6 +38,7 @@ public:
     QOpenGLBuffer indexBuf;
     QOpenGLBuffer arrayObjBuf[26];
     QOpenGLBuffer indexObjBuf;
+    void calculatePCA();
 };
 
 #endif // GEOMETRYENGINE_H

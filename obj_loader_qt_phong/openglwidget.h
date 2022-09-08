@@ -15,6 +15,7 @@
 #include <QOpenGLShaderProgram>
 #include <QOpenGLTexture>
 #include <QKeyEvent>
+#include <QProgressBar>
 
 class GeometryEngine;
 
@@ -57,6 +58,7 @@ protected:
 
     void initShaders();
     void initTextures();
+    QProgressBar progress_bar;
 
 private slots:
     //void on_pushButton_clicked();

@@ -11,12 +11,14 @@ SOURCES += \
     geometryengine.cpp \
     main.cpp \
     obj_loader.cpp \
-    openglwidget.cpp
+    openglwidget.cpp \
+    pca.cpp
 
 HEADERS += \
     geometryengine.h \
     obj_loader.h \
-    openglwidget.h
+    openglwidget.h \
+    pca.h
 
 FORMS += \
     openglwidget.ui

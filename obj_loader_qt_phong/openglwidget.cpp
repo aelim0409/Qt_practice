@@ -4,10 +4,15 @@
 #include <QDebug>
 #include "ui_openglwidget.h"
 
-
+float frameNum=23;
 openglWidget::openglWidget(QWidget *par)
 {
    // ui->setupUi(this);
+   progress_bar.setMaximum(26);
+   progress_bar.setMinimum(1);
+   progress_bar.setOrientation(Qt::Horizontal);
+   progress_bar.setGeometry(10,30,700,30);
+   progress_bar.setVisible(true);
 }
 openglWidget::~openglWidget()
 {
@@ -78,6 +83,7 @@ void openglWidget::timerEvent(QTimerEvent *)
 
 void openglWidget::initializeGL()
 {
+
     initializeOpenGLFunctions();
 
     glClearColor(0, 0, 0, 1);
@@ -201,6 +207,7 @@ void openglWidget::paintGL()
 
     program.setUniformValue("uProjMat", ProjMat);
     program.setUniformValue("uModelMat", ModelMat);
+    program.setUniformValue("uFrameNum",frameNum);
 
 
 //! [6]
@@ -227,7 +234,9 @@ void openglWidget::paintGL()
 
     }
     */
+
      geometries->drawObjGeometry(&program);
+     progress_bar.setValue(geometries->toss_index);
 }
 
 /*

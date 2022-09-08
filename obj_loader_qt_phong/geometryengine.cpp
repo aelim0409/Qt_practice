@@ -164,8 +164,6 @@ void GeometryEngine::initObj()
 
     qDebug()<<objLoader->vertex_num<<" "<<objLoader->m_triangles.size();
 
-
-
     scaleAll = objLoader->scaleAll;
     transtlateAvg=QVector3D(-objLoader->avgX,-objLoader->avgY,-(objLoader->avgZ)-5);
 
@@ -285,7 +283,22 @@ void GeometryEngine::drawObjGeometry(QOpenGLShaderProgram *program)
     Sleep(100);
    // }
 }
+/*
+void GeometryEngine::calculatePCA()
+{
+    pca pca;
+    pca::Data inputData;
+    for(int i=0;i<objLoader->v.size();i++)
+    {
+        inputData.v = objLoader->v[i];
+        inputData.vn=     objLoader->vn[i];
 
+        pca.data.push_back(inputData);
+    }
+
+    pca.calculateMeans(pca.data);
+}
+*/
 void GeometryEngine::drawObjArray(QOpenGLShaderProgram *program)
 {
     initObj();

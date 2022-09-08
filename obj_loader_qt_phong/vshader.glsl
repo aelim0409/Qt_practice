@@ -29,11 +29,11 @@ void main()
     gl_Position = uProjMat * (uModelMat * vPosition);
     //gl_Position = mvp_matrix * vPosition;
 
-    gl_Position *= vec4(1, 1, 1, 1);
+    gl_Position *= vec4(1, 1, -1, 1);
     float uShininess=100;
     vec4 uSpc= vec4(0.7,0.7,0.7,0);
 
-    vec4 N = uModelMat * vec4(vNormal.xyz, 0);
+    vec4 N = mvp_matrix * vec4(vNormal.xyz, 0);
     N3 = normalize(vec3(N.xyz));
 
     vec4 P = uModelMat* vPosition;
