@@ -14,10 +14,10 @@ private:
 public:
     pca();
 
-    Eigen::MatrixXf M;
-    Eigen::MatrixXf MA;
-    Eigen::MatrixXf CV;
-    Eigen::MatrixXf EV;
+    Eigen::MatrixXf M ;
+    Eigen::MatrixXf MA ;
+    Eigen::MatrixXf CV ;
+    Eigen::MatrixXf EV ;
 
 
     QVector3D means;

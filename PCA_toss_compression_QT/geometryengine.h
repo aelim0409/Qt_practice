@@ -15,7 +15,7 @@ public:
     GeometryEngine();
      GeometryEngine(obj_loader &obj);
     virtual ~GeometryEngine();
-
+  pca pca;
      int toss_index=0;
     void drawCubeGeometry(QOpenGLShaderProgram *program);
     void drawObjGeometry(QOpenGLShaderProgram *program);
@@ -32,6 +32,7 @@ public:
 
     void initCubeGeometry();
     void initObj();
+    void initObjPCA();
      obj_loader *objLoader;
      obj_loader *objLoaders_toss[26];
     QOpenGLBuffer arrayBuf;

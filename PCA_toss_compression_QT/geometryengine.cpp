@@ -49,6 +49,7 @@ GeometryEngine::GeometryEngine()
             name="0"+QString::number(i)+".obj";
         else
           name=QString::number(i)+".obj";
+
         objLoaders_toss[i-1]->loadModel("C:/homework3/toss/"+name);
         objLoaders_toss[i-1]->fileName=name;
 
@@ -171,6 +172,7 @@ void GeometryEngine::initObj()
 
     QVector4D color= QVector4D(0.5,0.5,0.5,0);
     NumVertices = objLoader->m_triangles.size()*3;
+    qDebug()<<NumVertices;
     objLoader->vertices = new obj_loader::VertexData[NumVertices];
 
     int cur=0;
@@ -237,6 +239,88 @@ void GeometryEngine::initObj()
     delete [] vnormal;
 }
 
+void GeometryEngine::initObjPCA()
+{
+    for(int i=0;i<26;i++)
+    {
+        objLoader=objLoaders_toss[i];
+    QString name;
+    qDebug()<<"objName:"<<objLoader->fileName;
+
+   // qDebug()<<objLoader->vertex_num<<" "<<objLoader->m_triangles.size();
+
+    scaleAll = objLoader->scaleAll;
+    transtlateAvg=QVector3D(-objLoader->avgX,-objLoader->avgY,-(objLoader->avgZ)-5);
+
+    QVector4D color= QVector4D(0.5,0.5,0.5,0);
+    NumVertices = objLoader->m_triangles.size()*3;
+    objLoader->vertices = new obj_loader::VertexData[NumVertices];
+
+    int cur=0;
+
+    QVector3D * fnormal = new QVector3D[objLoader->m_triangles.size()];
+    for(int i=0;i<objLoader->m_triangles.size();i++)
+    {
+        QVector4D a = QVector4D(objLoader->m_triangles[i].p1,1);
+        QVector4D b = QVector4D(objLoader->m_triangles[i].p2,1);
+        QVector4D c = QVector4D(objLoader->m_triangles[i].p3,1);
+
+        fnormal[i] = getNormal(a,b,c);
+    }
+
+
+    QVector3D * vnormal = new QVector3D[objLoader->vertex_num];
+    for(int i=0; i<objLoader->vertex_num; i++)
+        vnormal[i] =QVector3D(0,0,0);
+
+    for(int i=0;i<objLoader->m_triangles.size();i++)
+    {
+        //for(int j=0;j<3;j++);
+        vnormal[objLoader->m_triangles[i].v1]+=fnormal[i];
+        vnormal[objLoader->m_triangles[i].v2]+=fnormal[i];
+        vnormal[objLoader->m_triangles[i].v3]+=fnormal[i];
+    }
+
+    for(int i=0; i<objLoader->vertex_num; i++)
+        vnormal[i].normalize();
+
+    //qDebug()<<"vnormal calculate finish";
+
+
+
+    cur=0;
+/*
+    for(int i=0;i<objLoader->m_triangles.size();i++)
+    {
+        QVector4D a = QVector4D(objLoader->m_triangles[i].p1,1);
+        QVector4D b = QVector4D(objLoader->m_triangles[i].p2,1);
+        QVector4D c = QVector4D(objLoader->m_triangles[i].p3,1);
+
+        vertices[cur].position = a;   vertices[cur].color = color; vertices[cur].normal = QVector4D(fnormal[i],1);    cur++;
+        vertices[cur].position = b;   vertices[cur].color = color; vertices[cur].normal = QVector4D(fnormal[i],1);    cur++;
+        vertices[cur].position = c;   vertices[cur].color = color; vertices[cur].normal = QVector4D(fnormal[i],1);    cur++;
+    }
+*/
+    for(int i=0;i<objLoader->m_triangles.size();i++)
+    {
+        QVector4D a = QVector4D(objLoader->m_triangles[i].p1,1);
+        QVector4D b = QVector4D(objLoader->m_triangles[i].p2,1);
+        QVector4D c = QVector4D(objLoader->m_triangles[i].p3,1);
+
+        objLoader->vertices[cur].position = a;   objLoader->vertices[cur].color = color; objLoader->vertices[cur].normal = QVector4D(vnormal[objLoader->m_triangles[i].v1],1);    cur++;
+        objLoader->vertices[cur].position = b;   objLoader->vertices[cur].color = color; objLoader->vertices[cur].normal = QVector4D(vnormal[objLoader->m_triangles[i].v2],1);    cur++;
+        objLoader->vertices[cur].position = c;   objLoader->vertices[cur].color = color; objLoader->vertices[cur].normal = QVector4D(vnormal[objLoader->m_triangles[i].v3],1);    cur++;
+    }
+
+
+    arrayObjBuf[toss_index-1].bind();
+    arrayObjBuf[toss_index-1].allocate(objLoader->vertices, NumVertices * sizeof(obj_loader::VertexData));
+
+    delete [] fnormal;
+    delete [] vnormal;
+    }
+}
+
 
 void GeometryEngine::drawObjGeometry(QOpenGLShaderProgram *program)
 {
@@ -288,29 +372,45 @@ void GeometryEngine::drawObjGeometry(QOpenGLShaderProgram *program)
 
 void GeometryEngine::calculatePCA()
 {
-    pca pca;
+
     int k=0;
     qDebug()<<"Calculate PCA";
+    pca.M = Eigen::MatrixXf (26,4110);
+    pca.MA = Eigen::MatrixXf (26,4110);
+    pca.CV = Eigen::MatrixXf (26,26);
+
+    qDebug()<<"cols" <<pca.M.cols();
+
     for(int i=0;i<26;i++)
     {
-        qDebug()<<"i"<<i;
-        for(int j=0;j=objLoaders_toss[0]->vertex_num;j++)
+        //qDebug()<<"i"<<i;
+
+
+        //objLoaders_toss[0]->vertex_num
+        for(int j=0;j<objLoaders_toss[0]->vertex_num;j++)
         {
-            qDebug()<<j;
+            //qDebug()<<"j"<<j;
             k=j*3;
-             qDebug()<<k;
+             //qDebug()<<k;
+             //  qDebug()<<"k";
+
             pca.M(i,k)=objLoaders_toss[i]->v[j].x();
+             // qDebug()<<"k";
             pca.M(i,k+1)=objLoaders_toss[i]->v[j].y();
+           // qDebug()<<"k";
             pca.M(i,k+2)=objLoaders_toss[i]->v[j].z();
 
+
         }
+
     }
     qDebug()<<"input original";
+
     pca.calculateMeans();
     pca.calculateVariances();
     pca.calculateCovariance();
     pca.calculateEigen();
-    pca.calculateEigen();
+
     pca.pcaOutput(10);
 
 
@@ -318,7 +418,7 @@ void GeometryEngine::calculatePCA()
 
 void GeometryEngine::drawObjArray(QOpenGLShaderProgram *program)
 {
-    initObj();
+    //initObj();
 
     drawObjGeometry(program);
 }
