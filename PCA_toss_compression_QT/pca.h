@@ -18,7 +18,7 @@ public:
     Eigen::MatrixXf MA ;
     Eigen::MatrixXf CV ;
     Eigen::MatrixXf EV ;
-
+    Eigen::MatrixXf PCAResult;
 
     QVector3D means;
 

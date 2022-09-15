@@ -6,18 +6,18 @@ using namespace std;
 obj_loader *loader = new obj_loader();
 
 
-Eigen::MatrixXf mean(26,1);
+Eigen::MatrixXf mean(1,1370*3);
 Eigen::MatrixXf v_total(26,1);
 Eigen::MatrixXf cv_total;
 Eigen::MatrixXf variance(26,1);
 Eigen::MatrixXf eigenValues(26,1);
 Eigen::MatrixXf eigenVectors(26,26);
 Eigen::MatrixXf useEigen;
-Eigen::MatrixXf PCAResult(26,1370*3);
+
 
 pca::pca()
 {
-
+    PCAResult= Eigen::MatrixXf(26,1370*3);
 }
 
 void pca::calculateMeans()
@@ -26,27 +26,44 @@ void pca::calculateMeans()
     qDebug()<<"CALCULATE MEANS";
    // qDebug()<<mean.rows();
   //  float m=0;
+    int m=0;
+    /*
     for(int i=0;i<26;i++)
     {
 
         for(int j=0;j<1370*3;j++)
         {
            // qDebug()<<"CALCULATE MEANS"<<j;
-            mean(i,0)+=M(i,j);
+
+            mean(0,j)+=M(i,j);
+
             //qDebug()<<mean(i,0);
         }
 
         //qDebug()<<mean(i,0);
        // m=0;
     }
+    */
+    for(int i=0;i<1370*3;i++)
+    {
+        for(int j=0;j<26;j++)
+        {
+            mean(0,i)+=M(j,i);
+        }
+        mean(0,i)/=26;
+    }
 
-    for(int i=0;i<26;i++)
-        mean(i,0)/=26;
+
+
     //original-mean MA 26*(1370*3)
     for(int i=0;i<26;i++)
     {
         for(int j=0;j<1370*3;j++)
-            MA(i,j)=M(i,j)-mean(i,0);
+        {
+
+            MA(i,j)=M(i,j)-mean(0,j);
+
+        }
     }
 
     //qDebug()<<"means"<<means.x() << means.y()<<means.z();
@@ -104,7 +121,7 @@ void pca::calculateEigen()
     {
 
         eigenValues(i,0)= es.eigenvalues().col(0)[i].real();
-        qDebug()<<i*2<<" "<<eigenValues(i,0);
+        qDebug()<<i<<" "<<eigenValues(i,0);
     }
 
     for(int i=0;i<26;i++)
@@ -114,20 +131,45 @@ void pca::calculateEigen()
 
     }
 
+    qDebug()<<"ev 개수 : " << es.eigenvalues().size();
     qDebug()<<"CALCULATE eigenvectors";
 }
 
-void pca::pcaOutput(int M)
+void pca::pcaOutput(int N)
 {
     //useEigen  M*26
-    useEigen=Eigen::MatrixXf(M,26);
-    for(int i=M-1;i<=0;i--)
+    useEigen=Eigen::MatrixXf(N,26);
+    qDebug()<<"PC 개수 : " << N;
+
+    int m=0;
+    for(int i=0;i<N;i++)
     {
+
         for(int j=0;j<26;j++)
-             useEigen(M-1-i,j)=eigenVectors(i,j);
+         {
+
+            useEigen(i,j)=eigenVectors(i,j);
+            //useEigen(i,j)=0;
+
+        }
     }
-    //M*26 26*(1370*3) ->M차원의 데이터들
-    //26*M M*(1370*3)
+    //useEigen M*26 original-means 26*(1370*3) ->M차원의 데이터들
+    //useEigen.transpose 26*M (useEigen x original-means)*(1370*3)
     PCAResult = useEigen.transpose()*(useEigen*MA);
+    qDebug()<<" PCAResult : " << PCAResult(2,0)<<"original"<<M(2,0);
+    qDebug()<<" PCAResult : " << PCAResult(0,0)<<"original"<<M(0,0);
+    for(int i=0;i<26;i++)
+    {
+        for(int j=0;j<1370*3;j++)
+        {
+
+            PCAResult(i,j)+=mean(0,j);
+
+        }
+
+    }
+    qDebug()<<" PCAResult+mean : " << PCAResult(2,0)<<"original"<<M(2,0);
+    qDebug()<<" PCAResult+mean : " << PCAResult(0,0)<<"original"<<M(0,0);
 qDebug()<<"CALCULATE PCA";
+//PCAResult=MA;
 }
