@@ -5,6 +5,8 @@
 #include "ui_openglwidget.h"
 
 float frameNum=23;
+int flag_t=1;
+
 openglWidget::openglWidget(QWidget *par)
 {
    // ui->setupUi(this);
@@ -13,6 +15,7 @@ openglWidget::openglWidget(QWidget *par)
    progress_bar.setOrientation(Qt::Horizontal);
    progress_bar.setGeometry(10,30,700,30);
    progress_bar.setVisible(true);
+  // geometries->toss_index=1;
 }
 openglWidget::~openglWidget()
 {
@@ -29,7 +32,7 @@ void openglWidget::mousePressEvent(QMouseEvent *e)
 {
     // Save mouse press position
     mousePressPosition = QVector2D(e->position());
-    qDebug()<< "space!";
+    qDebug()<<"rotate!";
 }
 
 void openglWidget::mouseReleaseEvent(QMouseEvent *e)
@@ -51,13 +54,43 @@ void openglWidget::mouseReleaseEvent(QMouseEvent *e)
     angularSpeed += acc;
 }
 
-void openglWidget::KeyPressEvent(QKeyEvent *e)
+void openglWidget::keyPressEvent(QKeyEvent *e)
 {
+
+    /*
+    if(e->key()==Qt::Key_Space)
+            {
+                geometries->normalFlag=1;
+                qDebug()<< "space!";
+            }
+            */
+
         if(e->key()==Qt::Key_Space)
         {
-            geometries->normalFlag=1;
-            qDebug()<< "space!";
+            //geometries->normalFlag=1;
+
+
+            geometries->toss_index+=flag_t;
+            qDebug()<< "A! "<< geometries->toss_index;
+            if(geometries->toss_index>=26)
+                flag_t=-1;
+            else if(geometries->toss_index<=0)
+                flag_t=1;
+
         }
+
+        if(e->key()==Qt::Key_Tab)
+        {
+            //geometries->normalFlag=1;
+            geometries->toss_index+=flag_t;
+            qDebug()<< "D! "<< geometries->toss_index;
+            if(geometries->toss_index>=26)
+                flag_t=-1;
+            else if(geometries->toss_index<=0)
+                flag_t=1;
+        }
+
+
 
 }
 //! [0]

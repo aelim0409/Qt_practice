@@ -246,12 +246,12 @@ void GeometryEngine::initObjPCA()
     {
         objLoader=objLoaders_toss[toss_pca_row];
     QString name;
-    qDebug()<<"objName_PCA:"<<objLoader->fileName;
+    //qDebug()<<"objName_PCA:"<<objLoader->fileName;
 
    // qDebug()<<objLoader->vertex_num<<" "<<objLoader->m_triangles.size();
 
     scaleAll = objLoader->scaleAll;
-    transtlateAvg=QVector3D(-objLoader->avgX,-objLoader->avgY,-(objLoader->avgZ)-5);
+    //transtlateAvg=QVector3D(-objLoader->avgX,-objLoader->avgY,-(objLoader->avgZ)-5);
 
     QVector4D color= QVector4D(0.5,0.5,0.5,0);
     NumVertices = objLoader->m_triangles.size()*3;
@@ -273,8 +273,8 @@ void GeometryEngine::initObjPCA()
         QVector4D b = QVector4D(pca.PCAResult(toss_pca_row,objLoader->m_triangles[i].v2*3),pca.PCAResult(toss_pca_row,objLoader->m_triangles[i].v2*3+1),pca.PCAResult(toss_pca_row,objLoader->m_triangles[i].v2*3+2),1);
         QVector4D c = QVector4D(pca.PCAResult(toss_pca_row,objLoader->m_triangles[i].v3*3),pca.PCAResult(toss_pca_row,objLoader->m_triangles[i].v3*3+1),pca.PCAResult(toss_pca_row,objLoader->m_triangles[i].v3*3+2),1);
         fnormal[i] = getNormal(a,b,c);
-        if(i==objLoader->m_triangles.size()-1)
-            qDebug()<<"end fnormal";
+       // if(i==objLoader->m_triangles.size()-1)
+          //  qDebug()<<"end fnormal";
     }
 
 
@@ -349,6 +349,9 @@ void GeometryEngine::drawObjGeometry(QOpenGLShaderProgram *program)
     // Tell OpenGL which VBOs to use
   // for(toss_index=0;toss_index<26;toss_index++)
   // {
+
+
+//toss_index=1;
     arrayObjBuf[toss_index-1].bind();
 
   //  indexBuf.bind();
@@ -379,11 +382,14 @@ void GeometryEngine::drawObjGeometry(QOpenGLShaderProgram *program)
 
     glDrawArrays(GL_TRIANGLES, 0, NumVertices);
      //arrayObjBuf.destroy();
+
+
     toss_index+=flag;
     if(toss_index>=26)
         flag=-1;
     else if(toss_index<=0)
         flag=1;
+
     Sleep(100);
    // }
 }
@@ -397,7 +403,7 @@ void GeometryEngine::calculatePCA()
     pca.MA = Eigen::MatrixXf (26,4110);
     pca.CV = Eigen::MatrixXf (26,26);
 
-    qDebug()<<"cols" <<pca.M.cols();
+    qDebug()<<"M cols" <<pca.M.cols();
 
     for(int i=0;i<26;i++)
     {
@@ -429,8 +435,7 @@ void GeometryEngine::calculatePCA()
     pca.calculateCovariance();
     pca.calculateEigen();
 
-    pca.pcaOutput(10);
-
+    pca.pcaOutput(5);
 
 }
 
@@ -440,6 +445,8 @@ void GeometryEngine::drawObjArray(QOpenGLShaderProgram *program)
 
     drawObjGeometry(program);
 }
+
+
 /*
 void GeometryEngine::initCubeGeometry()
 {

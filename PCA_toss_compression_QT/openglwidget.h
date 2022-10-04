@@ -49,7 +49,7 @@ public:
 protected:
     void mousePressEvent(QMouseEvent *e) override;
     void mouseReleaseEvent(QMouseEvent *e) override;
-    void KeyPressEvent(QKeyEvent *e);
+    void keyPressEvent(QKeyEvent *e) override;
     void timerEvent(QTimerEvent *e) override;
 
     void initializeGL() override;

@@ -16,6 +16,7 @@ public:
 
     Eigen::MatrixXf M ;
     Eigen::MatrixXf MA ;
+    Eigen::MatrixXf MA_each ;
     Eigen::MatrixXf CV ;
     Eigen::MatrixXf EV ;
     Eigen::MatrixXf PCAResult;

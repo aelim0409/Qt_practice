@@ -23,7 +23,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>face</string>
+    <string>pc1</string>
    </property>
   </widget>
   <widget class="QPushButton" name="pushButton_2">
@@ -36,7 +36,7 @@
     </rect>
    </property>
    <property name="text">
-    <string>vertex</string>
+    <string>pc2</string>
    </property>
   </widget>
  </widget>
