@@ -5,6 +5,7 @@
 
 #include "geometryengine.h"
 #include "obj_loader.h"
+#include "pca.h"
 
 #include <QOpenGLWidget>
 #include <QOpenGLFunctions>
@@ -16,6 +17,7 @@
 #include <QOpenGLTexture>
 #include <QKeyEvent>
 #include <QProgressBar>
+#include "ui_openglwidget.h"
 
 class GeometryEngine;
 
@@ -69,6 +71,7 @@ private:
     QBasicTimer timer;
     QOpenGLShaderProgram program;
     GeometryEngine *geometries = nullptr;
+    pca pca;
 
     QOpenGLTexture *texture = nullptr;
 
@@ -82,9 +85,10 @@ private:
     obj_loader *objLoader2;
     obj_loader *objLoaders_toss2[26];
 
-  //  Ui::openglWidget *ui;
+    Ui::openglWidget ui;
 
-
+public slots:
+    void ButtonClicked();
 
 
 };

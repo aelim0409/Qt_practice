@@ -73,6 +73,19 @@ void pca::calculateMeans()
         }
     }
 
+    //MA_each_mean
+    MAEach_mean = Eigen::MatrixXf(1,1370*3);
+
+    for(int i=0;i<26;i++)
+    {
+        for(int j=0;j<1370*3;j++)
+        {
+            MAEach_mean(0,j)+=MA_each(i,j);
+        }
+    }
+
+   MAEach_mean/=26;
+
 }
 
 void pca::calculateVariances()
@@ -203,7 +216,8 @@ void pca::pcaOutput(int N)
     {
         for(int j=0;j<26;j++)
          {
-                useEigen(i,j)=eigenVectors(i,j);
+                //useEigen(i,j)=eigenVectors(i,j);
+            useEigen(i,j)=0;
         }
     }
 
@@ -226,8 +240,40 @@ void pca::pcaOutput(int N)
         }
     }
 
+    PCAResult_mean = Eigen::MatrixXf(1,1370*3);
+
     qDebug()<<" PCAResult+mean : " << PCAResult(2,0)<<"original"<<MA(2,0);
     qDebug()<<" PCAResult+mean : " << PCAResult(0,0)<<"original"<<MA(0,0);
     qDebug()<<"CALCULATE PCA";
-//PCAResult=MA;
+   //PCAResult=MAEach_mean;
 }
+
+void pca::pcaPC(int eigenIndex,int toss_index)
+{
+
+    qDebug()<<"useEigen(eigenIndex) row col";
+
+/*
+    Eigen::MatrixXf useEigen2(1,26);
+     Eigen::MatrixXf m2(1,21370*3);
+
+    for(int i=0;i<useEigen.cols();i++)
+    {
+        useEigen2(0,i)=useEigen(eigenIndex,i);
+    }
+    for(int i=0;i<1370*3;i++)
+    {
+        m2(0,i) = PCAResult(toss_index-1,i);
+    }
+
+    PCAResult_mean=useEigen2*(useEigen2.transpose()*3*m2);
+
+    for(int i=0;i<1370*3;i++)
+    {
+         PCAResult(toss_index-1,i)= PCAResult_mean(0,i);
+    }
+    */
+    PCAResult_mean(toss_index-1)=useEigen(eigenIndex)*(useEigen.transpose()(eigenIndex)* PCAResult(toss_index-1));
+    PCAResult(toss_index-1)= PCAResult_mean(0);
+}
+

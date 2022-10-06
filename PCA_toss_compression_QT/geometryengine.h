@@ -19,7 +19,7 @@ public:
      int toss_index=0;
     void drawCubeGeometry(QOpenGLShaderProgram *program);
     void drawObjGeometry(QOpenGLShaderProgram *program);
-
+ void drawObjGeometry_PCA(QOpenGLShaderProgram *program);
     void drawObjArray(QOpenGLShaderProgram *program);
     QVector3D getNormal(QVector4D a, QVector4D b, QVector4D c);
     QVector3D getNormal_vertex(QVector4D a, QVector4D b, QVector4D c);
@@ -33,6 +33,7 @@ public:
     void initCubeGeometry();
     void initObj();
     void initObjPCA();
+    void initObjPCA2();
      obj_loader *objLoader;
      obj_loader *objLoaders_toss[26];
     QOpenGLBuffer arrayBuf;

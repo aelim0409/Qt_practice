@@ -2,19 +2,26 @@
 #include <QMouseEvent>
 #include <cmath>
 #include <QDebug>
-#include "ui_openglwidget.h"
+
 
 float frameNum=23;
 int flag_t=1;
 
 openglWidget::openglWidget(QWidget *par)
 {
-   // ui->setupUi(this);
+    ui.setupUi(this);
+    /*
    progress_bar.setMaximum(26);
    progress_bar.setMinimum(1);
    progress_bar.setOrientation(Qt::Horizontal);
    progress_bar.setGeometry(10,30,700,30);
    progress_bar.setVisible(true);
+   */
+
+    connect(ui.pushButton, SIGNAL(clicked()), this, SLOT(ButtonClicked()));
+    QWidget widget;
+    widget.setVisible(true);
+
   // geometries->toss_index=1;
 }
 openglWidget::~openglWidget()
@@ -28,6 +35,13 @@ openglWidget::~openglWidget()
 }
 float mytime=0;
 //! [0]
+//!
+//!
+void openglWidget::ButtonClicked()
+{
+    qDebug()<<"clicked!"<<"toss_index : " << geometries->toss_index;
+    pca.pcaPC(0,geometries->toss_index);
+}
 void openglWidget::mousePressEvent(QMouseEvent *e)
 {
     // Save mouse press position
@@ -56,38 +70,34 @@ void openglWidget::mouseReleaseEvent(QMouseEvent *e)
 
 void openglWidget::keyPressEvent(QKeyEvent *e)
 {
-
-    /*
-    if(e->key()==Qt::Key_Space)
-            {
-                geometries->normalFlag=1;
-                qDebug()<< "space!";
-            }
-            */
-
-        if(e->key()==Qt::Key_Space)
+        if(e->key()==Qt::Key_A)
         {
-            //geometries->normalFlag=1;
-
-
-            geometries->toss_index+=flag_t;
-            qDebug()<< "A! "<< geometries->toss_index;
             if(geometries->toss_index>=26)
                 flag_t=-1;
-            else if(geometries->toss_index<=0)
-                flag_t=1;
+
+
+            if(geometries->toss_index+flag_t<0)
+                 geometries->toss_index=0;
+            else
+                geometries->toss_index+=flag_t;
+            qDebug()<< "A! "<< geometries->toss_index;
+
 
         }
 
-        if(e->key()==Qt::Key_Tab)
+        if(e->key()==Qt::Key_D)
         {
             //geometries->normalFlag=1;
-            geometries->toss_index+=flag_t;
-            qDebug()<< "D! "<< geometries->toss_index;
-            if(geometries->toss_index>=26)
-                flag_t=-1;
-            else if(geometries->toss_index<=0)
+
+            if(geometries->toss_index<=0)
                 flag_t=1;
+
+            if(geometries->toss_index+flag_t>26)
+                 geometries->toss_index=26;
+            else
+                geometries->toss_index+=flag_t;
+            qDebug()<< "D! "<< geometries->toss_index;
+
         }
 
 
@@ -269,7 +279,7 @@ void openglWidget::paintGL()
     */
 
      geometries->drawObjGeometry(&program);
-     progress_bar.setValue(geometries->toss_index);
+   //progress_bar.setValue(geometries->toss_index);
 }
 
 /*

@@ -20,6 +20,8 @@ public:
     Eigen::MatrixXf CV ;
     Eigen::MatrixXf EV ;
     Eigen::MatrixXf PCAResult;
+    Eigen::MatrixXf PCAResult_mean;
+    Eigen::MatrixXf MAEach_mean;
 
     QVector3D means;
 
@@ -30,6 +32,7 @@ public:
     void calculateTotalVariance();
     void calculateEigen();
     void pcaOutput(int M);
+    void pcaPC(int eigenIndex,int toss_index);
 };
 
 #endif // PCA_H
