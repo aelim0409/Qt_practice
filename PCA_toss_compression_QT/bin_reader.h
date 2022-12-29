@@ -1,5 +1,5 @@
-#ifndef OBJ_LOADER_H
-#define OBJ_LOADER_H
+#ifndef BIN_READER_H
+#define BIN_READER_H
 
 #include <QString>
 #include <QVector3D>
@@ -8,11 +8,40 @@
 #include <QOpenGLContext>
 #include <QOffscreenSurface>
 #include <qopenglfunctions_4_3_core.h>
-#include "bin_reader.h"
 
-class obj_loader
+class bin_reader
 {
 public:
+
+     bin_reader();
+     struct struct_info{
+         QChar header[12];
+         int version;
+         int num_points;
+         float startFrame;
+         float sampleRate;
+         int num_samples;
+     };
+
+     struct_info st_info;
+
+     struct pos_xyz
+     {
+         float x;
+         float y;
+         float z;
+     };
+
+
+     //pos_xyz *positions;
+
+
+     struct samples
+     {
+          QVector<pos_xyz> positions;
+     };
+
+     QVector<samples> sample;
 
     struct VertexData
     {
@@ -20,8 +49,11 @@ public:
         QVector4D color;
         QVector4D normal;
     };
+
+
+
     VertexData  *vertices;
-    obj_loader();
+
 
     QString fileName;
     int vertex_num=0;
@@ -52,9 +84,9 @@ public:
        QOpenGLTriangle3D triangle;
 
        QVector<QVector3D> v, vn;
- QVector3D Trans;
 
-       void loadModel(QString s,int idx_sample,bin_reader *bin);
+
+       void loadModel(char* s);
      //  void drawObject();
 };
 

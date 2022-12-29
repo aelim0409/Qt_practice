@@ -33,7 +33,7 @@ void main()
     float uShininess=100;
     vec4 uSpc= vec4(0.7,0.7,0.7,0);
 
-    vec4 N = mvp_matrix * vec4(vNormal.xyz, 0);
+    vec4 N = uModelMat * vec4(vNormal.xyz, 0);
     N3 = normalize(vec3(N.xyz));
 
     vec4 P = uModelMat* vPosition;

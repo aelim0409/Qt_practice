@@ -82,6 +82,7 @@ private:
     QVector3D rotationAxis;
     qreal angularSpeed = 0;
     QQuaternion rotation;
+    QVector3D rot;
     obj_loader *objLoader2;
     obj_loader *objLoaders_toss2[26];
 
@@ -89,6 +90,11 @@ private:
 
 public slots:
     void ButtonClicked();
+    void ButtonClicked_2();
+     void ButtonClicked_3();
+     void ButtonClicked_4();
+      void ButtonClicked_5();
+      void ButtonClicked_play();
 
 
 };

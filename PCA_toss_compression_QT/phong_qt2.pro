@@ -8,6 +8,7 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    bin_reader.cpp \
     geometryengine.cpp \
     main.cpp \
     obj_loader.cpp \
@@ -15,6 +16,7 @@ SOURCES += \
     pca.cpp
 
 HEADERS += \
+    bin_reader.h \
     geometryengine.h \
     obj_loader.h \
     openglwidget.h \

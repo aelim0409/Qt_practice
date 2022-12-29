@@ -11,7 +11,7 @@ int main(int argc, char *argv[])
     QApplication app(argc, argv);
 
     QSurfaceFormat format;
-    format.setDepthBufferSize(24);
+    format.setDepthBufferSize(100000);
     QSurfaceFormat::setDefaultFormat(format);
 
     app.setApplicationName("obj_loader");
@@ -20,6 +20,7 @@ int main(int argc, char *argv[])
     openglWidget widget;
     qDebug()<<"start widget";
     printf("ggggggggggggggggggggggggg\n");
+
     widget.show();
 #else
     QLabel note("OpenGL Support required");

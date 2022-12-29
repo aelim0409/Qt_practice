@@ -1,4 +1,6 @@
 #include "obj_loader.h"
+#include "bin_reader.h"
+
 #include <QFile>
 #include <QDebug>
 #include <QChar>
@@ -9,11 +11,16 @@ obj_loader::obj_loader()
 }
 
 
-void obj_loader::loadModel(QString s)
+void obj_loader::loadModel(QString s,int idx_sample,bin_reader *bin)
 {
     QFile file(s);
 
+    QVector3D MAX;
+     QVector3D MIN;
 
+     float max=-1000000000;
+     float min=1000000000;
+    float sum=0;
     if(file.exists())
     {
          printf("file exists \n");
@@ -41,8 +48,16 @@ void obj_loader::loadModel(QString s)
                               {
  //                                 qDebug() << "lineparts first == 'v' ";
 
-                                  v.push_back(QVector3D(lineParts.at(1).toFloat(), lineParts.at(2).toFloat(),
-                                           lineParts.at(3).toFloat()));
+                                  //
+
+
+
+                               //v.push_back(QVector3D(lineParts.at(1).toFloat(), lineParts.at(2).toFloat(), lineParts.at(3).toFloat()));
+
+                                  float vx=bin->sample[idx_sample].positions[vertex_num].x/1000;
+                                  float vy = bin->sample[idx_sample].positions[vertex_num].y/1000;
+                                  float vz =bin->sample[idx_sample].positions[vertex_num].z/1000;
+                                  v.push_back(QVector3D(vx,vy,vz));
 
 
                                   if(v[vertex_num].x()> maxX)   maxX=v[vertex_num].x();
@@ -57,10 +72,23 @@ void obj_loader::loadModel(QString s)
                                   sumY += v[vertex_num].y();
                                   sumZ += v[vertex_num].z();
 
+                                  sum=v[vertex_num].x()+v[vertex_num].y()+v[vertex_num].z();
+                                  if(sum>max)
+                                  {
+                                      max=sum;
+                                      MAX=v[vertex_num];
+                                  }
 
-                                //    qDebug()<<sumX << v[vertex_num].x();
+                                  if(sum<min)
+                                  {
+                                      min=sum;
+                                      MIN=v[vertex_num];
+                                  }
+
+                                   // qDebug() << v[vertex_num];
 
                                   vertex_num++;
+                                  //sum=0;
                               }
 
 
@@ -150,16 +178,22 @@ void obj_loader::loadModel(QString s)
 
                       }
 
-                     // qDebug() << "loop END!"<<vertex_num;
-
+                    // qDebug() << "loop END!"<<idx_sample<<vertex_num;
+/*
                        avgX = sumX / vertex_num;
                        avgY = sumY / vertex_num;
                        avgZ = sumZ / vertex_num;
+                       avgX=(maxX-minX)/300;
+                       avgY=(maxY-minY)/300;
+                       avgZ=(maxZ-minZ)/300;
+                       */
+
+                        Trans=MAX-MIN;
 
                       scaleX = (1.0-maxX)*10 + 1;
                        scaleY = (1.0-maxY)*10 + 1;
                        scaleZ = (1.0-maxZ)*10 + 1;
-                       // scaleX=maxX,scaleY=maxY,scaleZ=maxZ;
+                      // scaleX=maxX,scaleY=maxY,scaleZ=maxZ;
                        if(scaleX > scaleY)	{
                          if(scaleY > scaleZ)
                            scaleAll= scaleZ;
@@ -174,22 +208,7 @@ void obj_loader::loadModel(QString s)
                            scaleAll= scaleZ;
                        }
 
-                       if(scaleAll<0)
-                           scaleAll=1;
-/*
-                       scaleX=(maxX+minX)/2;
-                       scaleY=(maxY+minY)/2;
-                       scaleZ=(maxZ+minZ)/2;
-*/
-                    //   qDebug() <<"maxXYZ"<< maxX << maxY <<maxZ;
-//
-                      // qDebug() <<"scaleAll"<< scaleAll;
-                     //  qDebug() <<"scaleXYZ"<< scaleX << scaleY <<scaleZ;
-
-                     //  qDebug() <<"avgXYZ"<< avgX << avgY <<avgZ;
-                     //   qDebug() <<"vertexNum&triangleSize"<< vertex_num << m_triangles.size();
-
-                      file.close();
+                        file.close();
                   }
               }
     else

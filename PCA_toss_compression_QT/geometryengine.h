@@ -7,6 +7,7 @@
 #include <QVector4D>
 #include <eigen/Eigen/Dense>
 #include "obj_loader.h"
+#include "bin_reader.h"
 #include "pca.h"
 
 class GeometryEngine : protected QOpenGLFunctions
@@ -15,8 +16,11 @@ public:
     GeometryEngine();
      GeometryEngine(obj_loader &obj);
     virtual ~GeometryEngine();
-  pca pca;
+
+    pca PCA;
+
      int toss_index=0;
+     bool playFlag=false;
     void drawCubeGeometry(QOpenGLShaderProgram *program);
     void drawObjGeometry(QOpenGLShaderProgram *program);
  void drawObjGeometry_PCA(QOpenGLShaderProgram *program);
@@ -34,11 +38,12 @@ public:
     void initObj();
     void initObjPCA();
     void initObjPCA2();
+    bin_reader *binReader;
      obj_loader *objLoader;
-     obj_loader *objLoaders_toss[26];
+     obj_loader *objLoaders_toss[437];
     QOpenGLBuffer arrayBuf;
     QOpenGLBuffer indexBuf;
-    QOpenGLBuffer arrayObjBuf[26];
+    QOpenGLBuffer arrayObjBuf[437];
     QOpenGLBuffer indexObjBuf;
     void calculatePCA();
 };
